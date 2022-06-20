@@ -1,0 +1,19 @@
+modLoader = "javafml"
+loaderVersion = "[41,)"
+license = "All rights reserved"
+
+[[mods]]
+modId = "yeetusexperimentus"
+version = "${version}"
+displayName = "Yeetus Experimentus"
+displayURL = "https://www.curseforge.com/minecraft/mc-mods/yeetusexperimentus"
+authors = "Sunekaer"
+description = '''
+Disable's the Experimental Settings popup, which appears when you create or load world.
+'''
+[[dependencies.yeetusexperimentus]]
+modId="forge"
+mandatory=true
+versionRange="[41,)"
+ordering="NONE"
+side="CLIENT"
