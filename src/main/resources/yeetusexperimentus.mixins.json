@@ -6,7 +6,6 @@
     "PLDMixin"
   ],
   "client": [
-    "WPFMixin",
     "WSLMixin"
   ],
   "injectors": {
