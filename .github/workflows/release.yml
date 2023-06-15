@@ -1,15 +1,15 @@
-name: Build & Release
+name: Release
 
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
 
 jobs:
   build:
     if: |
       !contains(github.event.head_commit.message, '[ciskip]')
-    uses: nanite/workflows/.github/workflows/standard-release.yml@v1
+    uses: nanite/workflows/.github/workflows/standard-arch-release.yml@v1
     secrets:
       nanite-token: ${{ secrets.NANITE_DEPLOY }}
       curse-token: ${{ secrets.CURSE_DEPLOY }}

@@ -11,17 +11,17 @@ out
 *.ipr
 *.iws
 *.iml
-.idea
+.idea/*
+!.idea/scopes
 
 # gradle
 build
 .gradle
-logs
 
 # other
 eclipse
 run
-.vscode
 
-# Files from Forge MDK
-forge*changelog.txt
+.idea/
+
+Fabric/run_client/

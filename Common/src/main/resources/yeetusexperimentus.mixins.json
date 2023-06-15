@@ -2,12 +2,12 @@
   "required": true,
   "package": "com.sunekaer.yeetusexperimentus.mixin",
   "compatibilityLevel": "JAVA_17",
+  "refmap": "yeetusexperimentus.refmap.json",
   "mixins": [
-    "PLDMixin"
   ],
   "client": [
-    "WPFMixin",
-    "WSLMixin"
+    "CreateWorldScreenMixin",
+    "WorldOpenFlowsMixin"
   ],
   "injectors": {
     "defaultRequire": 1

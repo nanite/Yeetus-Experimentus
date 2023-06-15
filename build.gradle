@@ -1,119 +1,72 @@
-plugins {
-	id "dev.architectury.loom" version "0.12.0-SNAPSHOT"
-	id 'maven-publish'
-	id "com.matthewprenger.cursegradle" version "1.4.0"
+subprojects {
+
+    apply plugin: 'java'
+
+    java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+    def env = System.getenv();
+    ext.ENV = env
+
+    version = "${mod_version}-build.${ENV.GITHUB_RUN_NUMBER ?: 9999}+mc${minecraft_version}"
+    group = parent.maven_group
+
+    jar {
+        from(rootProject.file("LICENSE")) {
+            rename { "${it}_${mod_name}" }
+        }
+        manifest {
+            attributes([
+                    'Specification-Title'     : mod_name,
+                    'Specification-Vendor'    : mod_author,
+                    'Specification-Version'   : project.jar.archiveVersion,
+                    'Implementation-Title'    : project.name,
+                    'Implementation-Version'  : project.jar.archiveVersion,
+                    'Implementation-Vendor'   : mod_author,
+                    'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                    'Timestamp'               : System.currentTimeMillis(),
+                    'Built-On-Java'           : "${System.getProperty('java.vm.version')} (${System.getProperty('java.vm.vendor')})",
+                    'Built-On-Minecraft'      : minecraft_version
+            ])
+        }
+    }
+
+    repositories {
+        mavenCentral()
+        maven {
+            name = 'Sponge / Mixin'
+            url = 'https://repo.spongepowered.org/repository/maven-public/'
+        }
+        maven {
+            name = 'Nanite Releases'
+            url = 'https://maven.nanite.dev/releases'
+        }
+    }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
+        options.release = 17
+    }
+
+    java {
+        withSourcesJar()
+    }
+
+    processResources {
+
+        def buildProps = project.properties.clone()
+
+        buildProps.put('file', [jarVersion: project.version])
+
+        filesMatching(['pack.mcmeta', 'fabric.mod.json', 'META-INF/mods.toml']) {
+
+            expand buildProps
+        }
+    }
 }
 
-sourceCompatibility = targetCompatibility = JavaVersion.VERSION_17
 
-def ENV = System.getenv()
-version = "${mod_version}-build.${ENV.GITHUB_RUN_NUMBER ?: 9999}+mc${minecraft_version}"
-group = project.maven_group
-archivesBaseName = project.archives_base_name
-
-loom {
-	silentMojangMappingsLicense()
-
-	forge {
-		mixinConfigs = [
-				'yeetusexperimentus.mixins.json'
-		]
-
-		dataGen {
-			mod project.mod_id
-
-		}
-	}
-
-	launches {
-		data {
-			arg "--existing", file("src/main/resources").absolutePath
-		}
-	}
-}
-
-repositories {
-}
-
-
-dependencies {
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings loom.officialMojangMappings()
-
-	forge "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}"
-}
-
-processResources {
-	inputs.property "version", project.version
-
-	filesMatching("META-INF/mods.toml") {
-		expand "version": project.version
-	}
-}
-
-compileJava {
-	options.encoding = "UTF-8"
-	options.release = 17
-}
-
-java {
-	withSourcesJar()
-}
-
-jar {
-	from("LICENSE") {
-		rename { "${it}_${project.archivesBaseName}" }
-	}
-
-	manifest {
-		attributes([
-				"Specification-Title"     : project.mod_id,
-				"Specification-Vendor"    : project.mod_author,
-				"Specification-Version"   : "1",
-				"Implementation-Title"    : project.name,
-				"Implementation-Version"  : version,
-				"Implementation-Vendor"   : project.mod_author,
-				"Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
-		])
-	}
-}
-
-publishing {
-	publications {
-		mavenJava(MavenPublication) {
-			artifact(remapJar) {
-				builtBy remapJar
-			}
-			artifact(sourcesJar) {
-				builtBy remapSourcesJar
-			}
-		}
-	}
-
-	repositories {
-		if (ENV.NANITE_TOKEN) {
-			maven {
-				url "https://maven.nanite.dev/"
-				credentials {
-					username = "nanite"
-					password = "${ENV.NANITE_TOKEN}"
-				}
-			}
-		}
-	}
-}
-
-if (ENV.NANITE_TOKEN) {
-	curseforge {
-		apiKey = ENV.NANITE_TOKEN
-		project {
-			id = project.curseforge_id
-			releaseType = project.curseforge_type
-			addGameVersion "Forge"
-			addGameVersion project.minecraft_version
-			mainArtifact(remapJar)
-			changelog = file("./CHANGELOG.md")
-			changelogType = 'markdown'
-		}
-	}
+task curseforgePublish {
+    doLast {
+        println "Hello from ${project.name}!"
+    }
 }
