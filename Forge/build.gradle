@@ -80,9 +80,9 @@ task curseforgePublish(type: net.darkhax.curseforgegradle.TaskPublishCurseForge)
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            groupId project.group
+            groupId project.maven_group
             artifactId project.archivesBaseName
-            version project.version
+            version project.mod_version
             artifact jar
         }
     }
@@ -90,7 +90,7 @@ publishing {
     repositories {
         if (ENV.NANITE_TOKEN) {
             maven {
-                url "https://maven.nanite.dev/${SNAPSHOT ? "snapshots" : "releases"}"
+                url "https://maven.nanite.dev/releases"
                 credentials {
                     username = "nanite"
                     password = "${ENV.NANITE_TOKEN}"
