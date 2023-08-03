@@ -1,3 +1,2 @@
-## [2.3.0]
-- Update to 1.20 / 1.20.1
-- Port to Fabric
+## [2.3.1]
+- Updated CI / Build Script

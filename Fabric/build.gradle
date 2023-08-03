@@ -2,7 +2,6 @@ plugins {
     id 'fabric-loom' version '1.2-SNAPSHOT'
     id 'maven-publish'
     id 'idea'
-    id 'net.darkhax.curseforgegradle' version '1.0.14'
 }
 
 archivesBaseName = "${project.property("mod_name")}-${project.name}"
@@ -49,11 +48,25 @@ tasks.withType(JavaCompile) {
     source(commonProject.sourceSets.main.allSource)
 }
 
-task curseforgePublish(type: net.darkhax.curseforgegradle.TaskPublishCurseForge) {
-    apiToken = ENV.CURSE_TOKEN
-    def mainFile = upload(findProperty('curse_id'), remapJar)
-    mainFile.changelog = file("../CHANGELOG.md")
-    mainFile.releaseType = "beta"
-    mainFile.changelogType = "markdown"
-    mainFile.addJavaVersion("Java 17")
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId project.maven_group
+            artifactId project.archivesBaseName
+            version project.mod_version
+            artifact jar
+        }
+    }
+
+    repositories {
+        if (ENV.NANITE_TOKEN) {
+            maven {
+                url "https://maven.nanite.dev/releases"
+                credentials {
+                    username = "nanite"
+                    password = "${ENV.NANITE_TOKEN}"
+                }
+            }
+        }
+    }
 }

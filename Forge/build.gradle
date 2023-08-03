@@ -67,16 +67,6 @@ processResources {
 
 jar.finalizedBy('reobfJar')
 
-task curseforgePublish(type: net.darkhax.curseforgegradle.TaskPublishCurseForge) {
-
-    apiToken = ENV.CURSE_TOKEN
-    def mainFile = upload(findProperty('curse_id'), jar)
-    mainFile.changelog = file("../CHANGELOG.md")
-    mainFile.releaseType = "${curseforge_type}"
-    mainFile.changelogType = "markdown"
-    mainFile.addJavaVersion("Java 17")
-}
-
 publishing {
     publications {
         mavenJava(MavenPublication) {

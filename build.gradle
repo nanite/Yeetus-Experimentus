@@ -1,3 +1,7 @@
+plugins {
+    id "me.modmuss50.mod-publish-plugin" version "0.3.0"
+}
+
 subprojects {
 
     apply plugin: 'java'
@@ -65,8 +69,57 @@ subprojects {
 }
 
 
-task curseforgePublish {
-    doLast {
-        println "Hello from ${project.name}!"
+publishMods {
+    dryRun = providers.environmentVariable("CURSE_TOKEN").getOrNull() == null
+    changelog = file("./CHANGELOG.md").text
+    version = "${mod_version}"
+    type = STABLE
+
+    def fabricOptions = publishOptions {
+        file = project.provider { project(":Fabric").tasks.remapJar }.flatMap { it.archiveFile }
+        displayName = "${project.name} Fabric ${mod_version}+mc${minecraft_version}"
+        modLoaders.add("fabric")
+    }
+
+    def forgeOptions = publishOptions {
+        file = project.provider { project(":Forge").tasks.jar }.flatMap { it.archiveFile }
+        displayName = "${project.name} Forge ${mod_version}+mc${minecraft_version}"
+        modLoaders.add("forge")
+    }
+
+    def curseForgeOptions = curseforgeOptions {
+        accessToken = providers.environmentVariable("CURSE_TOKEN")
+        projectId = "${curseforge_id}"
+        minecraftVersions.add("${minecraft_version}")
+    }
+
+    def modrinthOptions = modrinthOptions {
+        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+        projectId = "${modrinth_id}"
+        minecraftVersions.add("${minecraft_version}")
+    }
+
+    curseforge("curseforgeFabric") {
+        from(curseForgeOptions, fabricOptions)
+        requires {
+            slug = "fabric-api"
+        }
+    }
+
+    curseforge("curseforgeForge") {
+        from(curseForgeOptions, forgeOptions)
+    }
+
+    if (providers.environmentVariable("MODRINTH_TOKEN").getOrNull() != null) {
+        modrinth("modrinthFabric") {
+            from(modrinthOptions, fabricOptions)
+            requires {
+                slug = "fabric-api"
+            }
+        }
+
+        modrinth("modrinthForge") {
+            from(modrinthOptions, forgeOptions)
+        }
     }
 }
