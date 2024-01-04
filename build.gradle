@@ -1,17 +1,18 @@
 plugins {
-    id "me.modmuss50.mod-publish-plugin" version "0.3.0"
+    id "me.modmuss50.mod-publish-plugin" version "0.4.5"
+    id "org.jetbrains.gradle.plugin.idea-ext" version "1.1.7"
 }
 
 subprojects {
-
     apply plugin: 'java'
+    apply plugin: 'maven-publish'
 
     java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
     def env = System.getenv();
     ext.ENV = env
 
-    version = "${mod_version}-build.${ENV.GITHUB_RUN_NUMBER ?: 9999}+mc${minecraft_version}"
+    version = "${mod_version}"
     group = parent.maven_group
 
     jar {
@@ -56,18 +57,30 @@ subprojects {
     }
 
     processResources {
-
         def buildProps = project.properties.clone()
-
         buildProps.put('file', [jarVersion: project.version])
 
         filesMatching(['pack.mcmeta', 'fabric.mod.json', 'META-INF/mods.toml']) {
-
             expand buildProps
         }
     }
-}
 
+    def token = providers.environmentVariable("NANITE_TOKEN")
+
+    publishing {
+        repositories {
+            if (token.isPresent()) {
+                maven {
+                    url "https://maven.nanite.dev/releases"
+                    credentials {
+                        username = "nanite"
+                        password = token.get()
+                    }
+                }
+            }
+        }
+    }
+}
 
 publishMods {
     dryRun = providers.environmentVariable("CURSE_TOKEN").getOrNull() == null
@@ -77,14 +90,20 @@ publishMods {
 
     def fabricOptions = publishOptions {
         file = project.provider { project(":Fabric").tasks.remapJar }.flatMap { it.archiveFile }
-        displayName = "${project.name} Fabric ${mod_version}+mc${minecraft_version}"
+        displayName = "[FABRIC][${minecraft_version}] Yeetus Experimentus ${mod_version}"
         modLoaders.add("fabric")
     }
 
     def forgeOptions = publishOptions {
         file = project.provider { project(":Forge").tasks.jar }.flatMap { it.archiveFile }
-        displayName = "${project.name} Forge ${mod_version}+mc${minecraft_version}"
+        displayName = "[FORGE][${minecraft_version}] Yeetus Experimentus ${mod_version}"
         modLoaders.add("forge")
+    }
+
+    def neoforgeOptions = publishOptions {
+        file = project.provider { project(":Neoforge").tasks.jar }.flatMap { it.archiveFile }
+        displayName = "[NEOFORGE][${minecraft_version}] Yeetus Experimentus ${mod_version}"
+        modLoaders.add("neoforge")
     }
 
     def curseForgeOptions = curseforgeOptions {
@@ -110,6 +129,10 @@ publishMods {
         from(curseForgeOptions, forgeOptions)
     }
 
+    curseforge("curseforgeNeoForge") {
+        from(curseForgeOptions, neoforgeOptions)
+    }
+
     if (providers.environmentVariable("MODRINTH_TOKEN").getOrNull() != null) {
         modrinth("modrinthFabric") {
             from(modrinthOptions, fabricOptions)
@@ -120,6 +143,10 @@ publishMods {
 
         modrinth("modrinthForge") {
             from(modrinthOptions, forgeOptions)
+        }
+
+        modrinth("modrinthNeoForge") {
+            from(modrinthOptions, neoforgeOptions)
         }
     }
 }

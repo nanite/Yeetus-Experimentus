@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[44,)"
+loaderVersion="[1,)"
 license="All Rights Reserved"
 [[mods]]
 modId="yeetusexperimentus"
@@ -11,9 +11,9 @@ description='''
 Disables the Experimental Settings popup, which appears when you create or load world.
 '''
 [[dependencies.yeetusexperimentus]]
-modId="forge"
+modId="neoforge"
 mandatory=true
-versionRange="[44,)"
+versionRange="[20.2,)"
 ordering="NONE"
 side="BOTH"
 [[dependencies.yeetusexperimentus]]

@@ -1,15 +1,22 @@
 plugins {
-    id 'fabric-loom' version '1.2-SNAPSHOT'
+    id 'fabric-loom' version '1.4-SNAPSHOT'
     id 'maven-publish'
     id 'idea'
 }
 
-archivesBaseName = "${project.property("mod_name")}-${project.name}"
+base {
+    archivesName = "${project.property("mod_name")}-${project.name}"
+}
 
 Project commonProject = parent.project("Common")
 
-apply {
-    from file("../gradle/scripts/maven.gradle")
+repositories {
+    maven {
+        url "https://api.modrinth.com/maven"
+        content {
+            includeGroup "maven.modrinth"
+        }
+    }
 }
 
 dependencies {
@@ -18,6 +25,9 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
     implementation commonProject
+
+    // Modmenu
+    modRuntimeOnly("maven.modrinth:modmenu:${modmenu_version}")
 }
 
 loom {
@@ -50,23 +60,9 @@ tasks.withType(JavaCompile) {
 
 publishing {
     publications {
-        mavenJava(MavenPublication) {
-            groupId project.maven_group
-            artifactId project.archivesBaseName
-            version project.mod_version
-            artifact jar
-        }
-    }
-
-    repositories {
-        if (ENV.NANITE_TOKEN) {
-            maven {
-                url "https://maven.nanite.dev/releases"
-                credentials {
-                    username = "nanite"
-                    password = "${ENV.NANITE_TOKEN}"
-                }
-            }
+        mavenFabric(MavenPublication) {
+            artifactId project.base.archivesName.get()
+            from components.java
         }
     }
 }

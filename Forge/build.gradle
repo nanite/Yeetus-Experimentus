@@ -3,14 +3,14 @@ plugins {
     id 'eclipse'
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '6.0.+'
-    id 'net.darkhax.curseforgegradle' version '1.0.14'
     id 'org.spongepowered.mixin' version '0.7-SNAPSHOT'
 }
 
-archivesBaseName = "${project.property("mod_name")}-${project.name}"
+base {
+    archivesName = "${project.property("mod_name")}-${project.name}"
+}
 
 Project commonProject = parent.project("Common")
-
 
 mixin {
     add commonProject.sourceSets.main, "${mod_id}.refmap.json"
@@ -69,23 +69,9 @@ jar.finalizedBy('reobfJar')
 
 publishing {
     publications {
-        mavenJava(MavenPublication) {
-            groupId project.maven_group
-            artifactId project.archivesBaseName
-            version project.mod_version
+        register("mavenForge", MavenPublication) {
+            artifactId base.archivesName.get()
             artifact jar
-        }
-    }
-
-    repositories {
-        if (ENV.NANITE_TOKEN) {
-            maven {
-                url "https://maven.nanite.dev/releases"
-                credentials {
-                    username = "nanite"
-                    password = "${ENV.NANITE_TOKEN}"
-                }
-            }
         }
     }
 }

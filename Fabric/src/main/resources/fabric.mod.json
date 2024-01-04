@@ -15,8 +15,7 @@
   },
 
   "license": "All Rights Reserved unless stated otherwise. Distribution permission is given to FeedTheBeast and CurseForge for use in modpacks",
-  "icon": "assets/yeetusexperimentus/icon.png",
-
+  "icon": "yeetusexperimentus-logo.png",
   "environment": "*",
   "entrypoints": {},
   "mixins": [
@@ -29,4 +28,3 @@
     "java": ">=17"
   }
 }
-  
