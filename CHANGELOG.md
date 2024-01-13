@@ -1,2 +1,2 @@
-## [82.0.1]
-- Build on Architectury
+## [84.0.0]
+- Ported to 1.20.4

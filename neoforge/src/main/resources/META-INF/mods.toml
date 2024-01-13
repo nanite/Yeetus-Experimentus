@@ -14,14 +14,14 @@ Disables the Experimental Settings popup, which appears when you create or load 
 
 [[dependencies.yeetusexperimentus]]
 modId="neoforge"
-mandatory=true
+required=true
 versionRange="[20.2,)"
 ordering="NONE"
 side="BOTH"
 
 [[dependencies.yeetusexperimentus]]
 modId="minecraft"
-mandatory=true
+required=true
 versionRange="[1.20,)"
 ordering="NONE"
 side="BOTH"
