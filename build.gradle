@@ -1,50 +1,51 @@
 plugins {
+    id "architectury-plugin" version "3.4-SNAPSHOT"
+    id "dev.architectury.loom" version "1.4-SNAPSHOT" apply false
     id "me.modmuss50.mod-publish-plugin" version "0.4.5"
-    id "org.jetbrains.gradle.plugin.idea-ext" version "1.1.7"
+}
+
+architectury {
+    minecraft = rootProject.minecraft_version
 }
 
 subprojects {
-    apply plugin: 'java'
-    apply plugin: 'maven-publish'
+    apply plugin: "dev.architectury.loom"
+    apply plugin: "maven-publish"
 
-    java.toolchain.languageVersion = JavaLanguageVersion.of(17)
-
-    def env = System.getenv();
-    ext.ENV = env
-
-    version = "${mod_version}"
-    group = parent.maven_group
-
-    jar {
-        from(rootProject.file("LICENSE")) {
-            rename { "${it}_${mod_name}" }
-        }
-        manifest {
-            attributes([
-                    'Specification-Title'     : mod_name,
-                    'Specification-Vendor'    : mod_author,
-                    'Specification-Version'   : project.jar.archiveVersion,
-                    'Implementation-Title'    : project.name,
-                    'Implementation-Version'  : project.jar.archiveVersion,
-                    'Implementation-Vendor'   : mod_author,
-                    'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                    'Timestamp'               : System.currentTimeMillis(),
-                    'Built-On-Java'           : "${System.getProperty('java.vm.version')} (${System.getProperty('java.vm.vendor')})",
-                    'Built-On-Minecraft'      : minecraft_version
-            ])
-        }
+    loom {
+        silentMojangMappingsLicense()
     }
 
+    dependencies {
+        minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
+        mappings loom.officialMojangMappings()
+    }
+
+    publishing {
+        repositories {
+            if (providers.environmentVariable("NANITE_TOKEN").isPresent()) {
+                maven {
+                    url "https://maven.nanite.dev/releases"
+                    credentials {
+                        username = "nanite"
+                        password = providers.environmentVariable("NANITE_TOKEN").get()
+                    }
+                }
+            }
+        }
+    }
+}
+
+allprojects {
+    apply plugin: "java"
+    apply plugin: "architectury-plugin"
+    apply plugin: "maven-publish"
+
+    archivesBaseName = rootProject.archives_base_name
+    version = rootProject.mod_version
+    group = rootProject.maven_group
+
     repositories {
-        mavenCentral()
-        maven {
-            name = 'Sponge / Mixin'
-            url = 'https://repo.spongepowered.org/repository/maven-public/'
-        }
-        maven {
-            name = 'Nanite Releases'
-            url = 'https://maven.nanite.dev/releases'
-        }
     }
 
     tasks.withType(JavaCompile) {
@@ -55,31 +56,6 @@ subprojects {
     java {
         withSourcesJar()
     }
-
-    processResources {
-        def buildProps = project.properties.clone()
-        buildProps.put('file', [jarVersion: project.version])
-
-        filesMatching(['pack.mcmeta', 'fabric.mod.json', 'META-INF/mods.toml']) {
-            expand buildProps
-        }
-    }
-
-    def token = providers.environmentVariable("NANITE_TOKEN")
-
-    publishing {
-        repositories {
-            if (token.isPresent()) {
-                maven {
-                    url "https://maven.nanite.dev/releases"
-                    credentials {
-                        username = "nanite"
-                        password = token.get()
-                    }
-                }
-            }
-        }
-    }
 }
 
 publishMods {
@@ -89,20 +65,20 @@ publishMods {
     type = STABLE
 
     def fabricOptions = publishOptions {
-        file = project.provider { project(":Fabric").tasks.remapJar }.flatMap { it.archiveFile }
-        displayName = "[FABRIC][${minecraft_version}] Yeetus Experimentus ${mod_version}"
+        file = project.provider { project(":fabric").tasks.remapJar }.flatMap { it.archiveFile }
+        displayName = "[FABRIC][${minecraft_version}] ${project.name} ${mod_version}"
         modLoaders.add("fabric")
     }
 
     def forgeOptions = publishOptions {
-        file = project.provider { project(":Forge").tasks.jar }.flatMap { it.archiveFile }
-        displayName = "[FORGE][${minecraft_version}] Yeetus Experimentus ${mod_version}"
+        file = project.provider { project(":forge").tasks.remapJar }.flatMap { it.archiveFile }
+        displayName = "[FORGE][${minecraft_version}] ${project.name} ${mod_version}"
         modLoaders.add("forge")
     }
 
-    def neoforgeOptions = publishOptions {
-        file = project.provider { project(":Neoforge").tasks.jar }.flatMap { it.archiveFile }
-        displayName = "[NEOFORGE][${minecraft_version}] Yeetus Experimentus ${mod_version}"
+    def neoForge = publishOptions {
+        file = project.provider { project(":neoforge").tasks.remapJar }.flatMap { it.archiveFile }
+        displayName = "[NEOFORGE][${minecraft_version}] ${project.name} ${mod_version}"
         modLoaders.add("neoforge")
     }
 
@@ -130,7 +106,7 @@ publishMods {
     }
 
     curseforge("curseforgeNeoForge") {
-        from(curseForgeOptions, neoforgeOptions)
+        from(curseForgeOptions, neoForge)
     }
 
     if (providers.environmentVariable("MODRINTH_TOKEN").getOrNull() != null) {
@@ -145,8 +121,8 @@ publishMods {
             from(modrinthOptions, forgeOptions)
         }
 
-        modrinth("modrinthNeoForge") {
-            from(modrinthOptions, neoforgeOptions)
+        modrinth("modrinthNeoforge") {
+            from(modrinthOptions, neoForge)
         }
     }
 }

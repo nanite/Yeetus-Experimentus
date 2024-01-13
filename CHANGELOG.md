@@ -1,2 +1,2 @@
-## [2.3.1]
-- Updated CI / Build Script
+## [82.0.1]
+- Build on Architectury

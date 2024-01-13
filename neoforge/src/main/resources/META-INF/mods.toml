@@ -1,0 +1,30 @@
+modLoader="javafml"
+loaderVersion="[1,)"
+license="All Rights Reserved"
+
+[[mods]]
+modId="yeetusexperimentus"
+version="${version}"
+displayName="Yeetus Experimentus"
+logoFile="yeetusexperimentus-logo.png"
+authors="Sunekaer"
+description='''
+Disables the Experimental Settings popup, which appears when you create or load world.
+'''
+
+[[dependencies.yeetusexperimentus]]
+modId="neoforge"
+mandatory=true
+versionRange="[20.2,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.yeetusexperimentus]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.20,)"
+ordering="NONE"
+side="BOTH"
+
+[[mixins]]
+config = "yeetusexperimentus-common.mixins.json"
