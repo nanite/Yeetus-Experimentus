@@ -1,11 +1,12 @@
 {
   "required": true,
-  "package": "com.sunekaer.yeetusexperimentus.mixin",
+  "package": "com.sunekaer.yeetusexperimentus.fabric.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
   ],
   "client": [
-
+    "CreateWorldScreenMixin",
+    "WorldOpenFlowsMixin"
   ],
   "injectors": {
     "defaultRequire": 1

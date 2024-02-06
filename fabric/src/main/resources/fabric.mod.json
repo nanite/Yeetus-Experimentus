@@ -19,7 +19,8 @@
   "environment": "*",
   "entrypoints": {},
   "mixins": [
-    "yeetusexperimentus-common.mixins.json"
+    "yeetusexperimentus-common.mixins.json",
+    "yeetusexperimentus-fabric.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.14",

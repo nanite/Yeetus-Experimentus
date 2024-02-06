@@ -13,9 +13,9 @@ loom {
     forge {
         convertAccessWideners = true
         extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
-        mixinConfigs = [
-                "yeetusexperimentus-common.mixins.json"
-        ]
+
+        mixinConfigs "yeetusexperimentus-forge.mixins.json"
+        mixinConfigs "yeetusexperimentus-common.mixins.json"
     }
 }
 
@@ -35,6 +35,7 @@ dependencies {
 }
 
 processResources {
+    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
     inputs.property "version", project.version
 
     filesMatching("META-INF/mods.toml") {
