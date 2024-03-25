@@ -1,4 +1,53 @@
 {
-  "curseID" : 635427,
-  "maven" : "https://maven.nanite.dev/releases/com/sunekaer/mods/yeetusexperimentus"
+  "spec": 2,
+  "maven": [
+    {
+      "name": "Common",
+      "url": "https://maven.nanite.dev/releases/com/sunekaer/mods/YeetusExperimentus-common"
+    },
+    {
+      "name": "Forge",
+      "url": "https://maven.nanite.dev/releases/com/sunekaer/mods/YeetusExperimentus-forge"
+    },
+    {
+      "name": "Fabric",
+      "url": "https://maven.nanite.dev/releases/com/sunekaer/mods/YeetusExperimentus-fabric"
+    },
+    {
+      "name": "NeoForge",
+      "url": "https://maven.nanite.dev/releases/com/sunekaer/mods/YeetusExperimentus-neoforge"
+    }
+  ],
+  "providers": [
+    {
+      "type": "identity",
+      "name": "Modrinth",
+      "id": "HaaH232J",
+      "slug": "yeetus-experimentus",
+      "variants": ["forge", "fabric", "neoforge"]
+    },
+    {
+      "type": "identity",
+      "name": "CurseForge",
+      "id": "635427",
+      "slug": "yeetusexperimentus",
+      "variants": ["forge", "fabric", "neoforge"]
+    },
+    {
+      "type": "url",
+      "name": "GitHub",
+      "url": "https://github.com/nanite/Yeetus-Experimentus",
+      "variants": ["forge", "fabric", "neoforge", "common"]
+    }
+  ],
+  "authors": [
+    {
+      "name": "Sunekaer",
+      "role": "Owner"
+    },
+    {
+      "name": "Gaz492",
+      "role": "Mascot"
+    }
+  ] 
 }
