@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "yeetusexperimentus",
+  "version": "${version}",
+
+  "name": "Yeetus Experimentus",
+  "description": "Disables the Experimental Settings popup, which appears when you create or load world.",
+  "authors": [
+    "Sunekaer"
+  ],
+  "contact": {
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/yeetusexperimentus",
+    "sources": "https://github.com/nanite/Yeetus-Experimentus",
+    "issues": "https://github.com/nanite/Yeetus-Experimentus/issues"
+  },
+
+  "license": "All Rights Reserved unless stated otherwise. Distribution permission is given to FeedTheBeast and CurseForge for use in modpacks",
+  "icon": "yeetusexperimentus-logo.png",
+  "environment": "*",
+  "entrypoints": {},
+  "mixins": [
+    "yeetusexperimentus-common.mixins.json",
+    "yeetusexperimentus-fabric.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14",
+    "fabric": "*",
+    "minecraft": ">=1.20.2",
+    "java": ">=17"
+  }
+}

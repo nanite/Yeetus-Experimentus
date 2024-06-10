@@ -1,119 +1,131 @@
 plugins {
-	id "dev.architectury.loom" version "0.12.0-SNAPSHOT"
-	id 'maven-publish'
-	id "com.matthewprenger.cursegradle" version "1.4.0"
+    id "architectury-plugin" version "3.4-SNAPSHOT"
+    id "dev.architectury.loom" version "1.6-SNAPSHOT" apply false
+    id "me.modmuss50.mod-publish-plugin" version "0.5.1"
 }
 
-sourceCompatibility = targetCompatibility = JavaVersion.VERSION_17
-
-def ENV = System.getenv()
-version = "${mod_version}-build.${ENV.GITHUB_RUN_NUMBER ?: 9999}+mc${minecraft_version}"
-group = project.maven_group
-archivesBaseName = project.archives_base_name
-
-loom {
-	silentMojangMappingsLicense()
-
-	forge {
-		mixinConfigs = [
-				'yeetusexperimentus.mixins.json'
-		]
-
-		dataGen {
-			mod project.mod_id
-
-		}
-	}
-
-	launches {
-		data {
-			arg "--existing", file("src/main/resources").absolutePath
-		}
-	}
+architectury {
+    minecraft = rootProject.minecraft_version
 }
 
-repositories {
+subprojects {
+    apply plugin: "dev.architectury.loom"
+    apply plugin: "maven-publish"
+
+    loom {
+        silentMojangMappingsLicense()
+    }
+
+    dependencies {
+        minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
+        mappings loom.officialMojangMappings()
+    }
+
+    publishing {
+        repositories {
+            if (providers.environmentVariable("NANITE_TOKEN").isPresent()) {
+                maven {
+                    url "https://maven.nanite.dev/releases"
+                    credentials {
+                        username = "nanite"
+                        password = providers.environmentVariable("NANITE_TOKEN").get()
+                    }
+                }
+            }
+        }
+    }
 }
 
+allprojects {
+    apply plugin: "java"
+    apply plugin: "architectury-plugin"
+    apply plugin: "maven-publish"
 
-dependencies {
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings loom.officialMojangMappings()
+    archivesBaseName = rootProject.archives_base_name
+    version = rootProject.mod_version
+    group = rootProject.maven_group
 
-	forge "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}"
+    repositories {
+    }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
+        options.release = 17
+    }
+
+    java {
+        withSourcesJar()
+    }
 }
 
-processResources {
-	inputs.property "version", project.version
+publishMods {
+    dryRun = providers.environmentVariable("CURSE_TOKEN").getOrNull() == null
+    changelog = file("./CHANGELOG.md").text
+    version = "${mod_version}"
+    type = STABLE
 
-	filesMatching("META-INF/mods.toml") {
-		expand "version": project.version
-	}
-}
+    def fabricOptions = publishOptions {
+        file = project.provider { project(":fabric").tasks.remapJar }.flatMap { it.archiveFile }
+        displayName = "[FABRIC][${minecraft_version}] ${project.name} ${mod_version}"
+        modLoaders.add("fabric")
+    }
 
-compileJava {
-	options.encoding = "UTF-8"
-	options.release = 17
-}
+    def forgeOptions = publishOptions {
+        file = project.provider { project(":forge").tasks.remapJar }.flatMap { it.archiveFile }
+        displayName = "[FORGE][${minecraft_version}] ${project.name} ${mod_version}"
+        modLoaders.add("forge")
+    }
 
-java {
-	withSourcesJar()
-}
+    def neoForge = publishOptions {
+        file = project.provider { project(":neoforge").tasks.remapJar }.flatMap { it.archiveFile }
+        displayName = "[NEOFORGE][${minecraft_version}] ${project.name} ${mod_version}"
+        modLoaders.add("neoforge")
+    }
 
-jar {
-	from("LICENSE") {
-		rename { "${it}_${project.archivesBaseName}" }
-	}
+    def curseForgeOptions = curseforgeOptions {
+        accessToken = providers.environmentVariable("CURSE_TOKEN")
+        projectId = "${curseforge_id}"
+        minecraftVersions.add("${minecraft_version}")
+        javaVersions.add(JavaVersion.VERSION_17)
+        clientRequired = true
+        serverRequired = false
+    }
 
-	manifest {
-		attributes([
-				"Specification-Title"     : project.mod_id,
-				"Specification-Vendor"    : project.mod_author,
-				"Specification-Version"   : "1",
-				"Implementation-Title"    : project.name,
-				"Implementation-Version"  : version,
-				"Implementation-Vendor"   : project.mod_author,
-				"Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
-		])
-	}
-}
+    def modrinthOptions = modrinthOptions {
+        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+        projectId = "${modrinth_id}"
+        minecraftVersions.add("${minecraft_version}")
+    }
 
-publishing {
-	publications {
-		mavenJava(MavenPublication) {
-			artifact(remapJar) {
-				builtBy remapJar
-			}
-			artifact(sourcesJar) {
-				builtBy remapSourcesJar
-			}
-		}
-	}
+    curseforge("curseforgeFabric") {
+        from(curseForgeOptions, fabricOptions)
+        requires {
+            slug = "fabric-api"
+        }
+    }
 
-	repositories {
-		if (ENV.NANITE_TOKEN) {
-			maven {
-				url "https://maven.nanite.dev/"
-				credentials {
-					username = "nanite"
-					password = "${ENV.NANITE_TOKEN}"
-				}
-			}
-		}
-	}
-}
+    curseforge("curseforgeForge") {
+        from(curseForgeOptions, forgeOptions)
+    }
 
-if (ENV.NANITE_TOKEN) {
-	curseforge {
-		apiKey = ENV.NANITE_TOKEN
-		project {
-			id = project.curseforge_id
-			releaseType = project.curseforge_type
-			addGameVersion "Forge"
-			addGameVersion project.minecraft_version
-			mainArtifact(remapJar)
-			changelog = file("./CHANGELOG.md")
-			changelogType = 'markdown'
-		}
-	}
+    curseforge("curseforgeNeoForge") {
+        from(curseForgeOptions, neoForge)
+    }
+
+    if (providers.environmentVariable("MODRINTH_TOKEN").getOrNull() != null) {
+        modrinth("modrinthFabric") {
+            from(modrinthOptions, fabricOptions)
+            requires {
+                slug = "fabric-api"
+            }
+        }
+
+        modrinth("modrinthForge") {
+            from(modrinthOptions, forgeOptions)
+        }
+
+        modrinth("modrinthNeoforge") {
+            from(modrinthOptions, neoForge)
+        }
+    }
 }

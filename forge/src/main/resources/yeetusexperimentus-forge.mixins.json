@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "com.sunekaer.yeetusexperimentus.forge.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+  ],
+  "client": [
+    "PrimaryLevelDataMixinForge"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8"
+}
