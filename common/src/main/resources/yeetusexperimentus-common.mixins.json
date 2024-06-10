@@ -5,7 +5,8 @@
   "mixins": [
   ],
   "client": [
-
+    "CreateWorldScreenMixin",
+    "WorldOpenFlowsMixin"
   ],
   "injectors": {
     "defaultRequire": 1

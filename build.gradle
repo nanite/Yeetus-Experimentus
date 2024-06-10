@@ -1,7 +1,7 @@
 plugins {
     id "architectury-plugin" version "3.4-SNAPSHOT"
-    id "dev.architectury.loom" version "1.5-SNAPSHOT" apply false
-    id "me.modmuss50.mod-publish-plugin" version "0.4.5"
+    id "dev.architectury.loom" version "1.6-SNAPSHOT" apply false
+    id "me.modmuss50.mod-publish-plugin" version "0.5.1"
 }
 
 architectury {
@@ -86,6 +86,9 @@ publishMods {
         accessToken = providers.environmentVariable("CURSE_TOKEN")
         projectId = "${curseforge_id}"
         minecraftVersions.add("${minecraft_version}")
+        javaVersions.add(JavaVersion.VERSION_17)
+        clientRequired = true
+        serverRequired = false
     }
 
     def modrinthOptions = modrinthOptions {

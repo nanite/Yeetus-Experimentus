@@ -1,3 +1,5 @@
-## [84.0.1]
+## [84.0.2]
+
 ### Fixed
-- not being able existing world
+
+- Simplified mixins which should fix the mod not working on NeoForge and Forge 
