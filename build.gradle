@@ -50,7 +50,7 @@ allprojects {
 
     tasks.withType(JavaCompile) {
         options.encoding = "UTF-8"
-        options.release = 17
+        options.release = 21
     }
 
     java {
@@ -70,11 +70,11 @@ publishMods {
         modLoaders.add("fabric")
     }
 
-    def forgeOptions = publishOptions {
-        file = project.provider { project(":forge").tasks.remapJar }.flatMap { it.archiveFile }
-        displayName = "[FORGE][${minecraft_version}] ${project.name} ${mod_version}"
-        modLoaders.add("forge")
-    }
+//    def forgeOptions = publishOptions {
+//        file = project.provider { project(":forge").tasks.remapJar }.flatMap { it.archiveFile }
+//        displayName = "[FORGE][${minecraft_version}] ${project.name} ${mod_version}"
+//        modLoaders.add("forge")
+//    }
 
     def neoForge = publishOptions {
         file = project.provider { project(":neoforge").tasks.remapJar }.flatMap { it.archiveFile }
@@ -86,7 +86,7 @@ publishMods {
         accessToken = providers.environmentVariable("CURSE_TOKEN")
         projectId = "${curseforge_id}"
         minecraftVersions.add("${minecraft_version}")
-        javaVersions.add(JavaVersion.VERSION_17)
+        javaVersions.add(JavaVersion.VERSION_21)
         clientRequired = true
         serverRequired = false
     }
@@ -104,9 +104,9 @@ publishMods {
         }
     }
 
-    curseforge("curseforgeForge") {
-        from(curseForgeOptions, forgeOptions)
-    }
+//    curseforge("curseforgeForge") {
+//        from(curseForgeOptions, forgeOptions)
+//    }
 
     curseforge("curseforgeNeoForge") {
         from(curseForgeOptions, neoForge)
@@ -120,9 +120,9 @@ publishMods {
             }
         }
 
-        modrinth("modrinthForge") {
-            from(modrinthOptions, forgeOptions)
-        }
+//        modrinth("modrinthForge") {
+//            from(modrinthOptions, forgeOptions)
+//        }
 
         modrinth("modrinthNeoforge") {
             from(modrinthOptions, neoForge)

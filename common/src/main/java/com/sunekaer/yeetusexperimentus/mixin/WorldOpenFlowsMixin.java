@@ -7,6 +7,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
+@Debug(export = true)
 @Mixin(WorldOpenFlows.class)
 public class WorldOpenFlowsMixin {
     @ModifyVariable(method = "confirmWorldCreation", at = @At("HEAD"), argsOnly = true)
@@ -15,9 +16,9 @@ public class WorldOpenFlowsMixin {
     }
 
     @ModifyVariable(
-            method = "loadLevel(Lnet/minecraft/world/level/storage/LevelStorageSource$LevelStorageAccess;Lcom/mojang/serialization/Dynamic;ZZLjava/lang/Runnable;)V",
+            method = "openWorldCheckWorldStemCompatibility",
             at = @At("STORE"),
-            ordinal = 3
+            ordinal = 1
     )
     public boolean no(boolean a) {
         return false;
