@@ -13,13 +13,4 @@ public class WorldOpenFlowsMixin {
     private static Lifecycle alwaysStable(Lifecycle cycle) {
         return Lifecycle.stable();
     }
-
-    @ModifyVariable(
-            method = "loadLevel(Lnet/minecraft/world/level/storage/LevelStorageSource$LevelStorageAccess;Lcom/mojang/serialization/Dynamic;ZZLjava/lang/Runnable;)V",
-            at = @At("STORE"),
-            ordinal = 3
-    )
-    public boolean no(boolean a) {
-        return false;
-    }
 }
