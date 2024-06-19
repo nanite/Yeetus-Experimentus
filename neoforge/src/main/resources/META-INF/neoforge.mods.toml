@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[2,)"
+loaderVersion="[4,)"
 license="All Rights Reserved"
 
 [[mods]]
@@ -15,14 +15,14 @@ Disables the Experimental Settings popup, which appears when you create or load 
 [[dependencies.yeetusexperimentus]]
 modId="neoforge"
 required=true
-versionRange="[20.6,)"
+versionRange="[21,)"
 ordering="NONE"
 side="BOTH"
 
 [[dependencies.yeetusexperimentus]]
 modId="minecraft"
 required=true
-versionRange="[1.20.6,)"
+versionRange="[1.21,)"
 ordering="NONE"
 side="BOTH"
 
