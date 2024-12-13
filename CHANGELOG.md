@@ -1,5 +1,5 @@
-## [84.0.2]
+## [87.0.0]
 
-### Fixed
+### Changed
 
-- Simplified mixins which should fix the mod not working on NeoForge and Forge 
+- Updated to 1.21 

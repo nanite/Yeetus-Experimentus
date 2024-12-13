@@ -10,4 +10,5 @@ pluginManagement {
 }
 
 rootProject.name = 'YeetusExperimentus'
-include("common", "fabric", "forge", "neoforge")
+//include("common", "fabric", "forge", "neoforge")
+include("common", "fabric", "neoforge")
