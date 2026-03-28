@@ -1,14 +1,17 @@
 pluginManagement {
     repositories {
         maven { url "https://maven.neoforged.net/releases" }
-        maven { url "https://maven.creeperhost.net/" }
         maven { url "https://maven.fabricmc.net/" }
-        maven { url "https://maven.architectury.dev/" }
-        maven { url "https://maven.minecraftforge.net/" }
+        maven {
+            url = "https://repo.spongepowered.org/repository/maven-public/"
+            content {
+                includeGroup "org.spongepowered"
+            }
+        }
         gradlePluginPortal()
     }
 }
 
-rootProject.name = 'YeetusExperimentus'
-//include("common", "fabric", "forge", "neoforge")
-include("common", "fabric", "neoforge")
+include "common", "neoforge", "fabric"
+
+rootProject.name = "YeetusExperimentus"

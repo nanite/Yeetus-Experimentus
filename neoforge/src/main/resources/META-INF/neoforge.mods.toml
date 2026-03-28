@@ -3,7 +3,7 @@ loaderVersion="[4,)"
 license="All Rights Reserved"
 
 [[mods]]
-modId="yeetusexperimentus"
+modId="${mod_id}"
 version="${version}"
 displayName="Yeetus Experimentus"
 logoFile="yeetusexperimentus-logo.png"
@@ -14,15 +14,15 @@ Disables the Experimental Settings popup, which appears when you create or load 
 
 [[dependencies.yeetusexperimentus]]
 modId="neoforge"
-required=true
-versionRange="[21,)"
+type="required"
+versionRange="${neoforge_version_range}"
 ordering="NONE"
 side="BOTH"
 
 [[dependencies.yeetusexperimentus]]
 modId="minecraft"
-required=true
-versionRange="[1.21,)"
+type="required"
+versionRange="${minecraft_version_range}"
 ordering="NONE"
 side="BOTH"
 
