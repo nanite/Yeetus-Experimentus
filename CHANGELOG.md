@@ -1,5 +1,3 @@
-## [87.0.0]
-
 ### Changed
 
-- Updated to 1.21 
+- Updated to 26.2 
