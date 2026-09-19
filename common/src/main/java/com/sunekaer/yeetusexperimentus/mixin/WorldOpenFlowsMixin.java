@@ -18,8 +18,7 @@ public class WorldOpenFlowsMixin {
     @ModifyVariable(
             method = "openWorldCheckWorldStemCompatibility",
             at = @At("STORE"),
-            ordinal = 1
-    )
+            name = "unstable")
     public boolean no(boolean a) {
         return false;
     }

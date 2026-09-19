@@ -6,7 +6,7 @@ license="All Rights Reserved"
 modId="${mod_id}"
 version="${version}"
 displayName="Yeetus Experimentus"
-logoFile="yeetusexperimentus-logo.png"
+iconFile="yeetusexperimentus-logo.png"
 authors="Sunekaer"
 description='''
 Disables the Experimental Settings popup, which appears when you create or load world.
